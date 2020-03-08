@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.Map.Entry;
 
@@ -11,6 +12,7 @@ import java.util.Map.Entry;
  * 
  */
 public class Solution {
+
 
   /**
    * Sort hash map by value in descending order.
@@ -41,10 +43,15 @@ public class Solution {
    */
   static String sortString(String str) {
 
+    // **** check the string ****
+    if ((str == null) || (str.length() <= 0)) {
+      return "";
+    }
+
     // **** hash map used to determine character frequency ****
     HashMap<Character, Integer> hm = new HashMap<Character, Integer>();
 
-    // **** populate the hash map -> O(n) ****
+    // *** populate the hashmap used to get the frequency of the characters -> O(n) ****
     for (int i = 0; i < str.length(); i++) {
 
       // **** for ease of use ****
@@ -88,6 +95,60 @@ public class Solution {
 
 
   /**
+   * Given a string, sort it in increasing order based on the frequency of its characters.
+   * This method runs in -> O(n)) time.
+   * The code is shorter than in the sortString method.
+   */
+  static String frequencyString(String str) {
+
+    // **** check the string ****
+    if ((str == null) || (str.length() <= 0)) {
+      return "";
+    }
+
+    // **** used to build the string to return ****
+    StringBuilder sb = new StringBuilder();
+
+    // **** populate the hashmap used to get the frequency of the characters -> O(n) ****
+    HashMap<Character, Integer> hm = new HashMap<Character, Integer>();
+    for (char c : str.toCharArray()) {
+      hm.put(c, hm.getOrDefault(c, 0) + 1);
+    }
+    
+    // **** declare a priority queue with Comparator ****
+    PriorityQueue<Character> pq = new PriorityQueue<Character>(new Comparator<Character>() {
+      @Override
+      public int compare(Character a, Character b) {
+        return hm.get(b) - hm.get(a);
+      }
+    });
+
+    // **** populate the priority queue -> O(n) ****
+    for (char c : hm.keySet()) {
+      pq.add(c);      // O(log(n))
+    }
+
+    // **** populate the string builder -> O(n) **** 
+    while (!pq.isEmpty()) {
+
+      // **** get the next character from the priority queue ****
+      char c = pq.remove();
+
+      // **** get the count from the hash map ****
+      int count = hm.get(c);
+
+      // **** append this character to string builder the specified count ****
+      for (int i = 0; i < count; i++) {
+        sb.append(c);
+      }
+    }
+
+    // **** return the string ****
+    return sb.toString();
+  }
+
+
+  /**
    * Test scaffolding.
    */
   public static void main(String[] args) {
@@ -106,6 +167,7 @@ public class Solution {
 
       // **** sort the characters in the string and display result ****
       System.out.println(sortString(str));
+      System.out.println(frequencyString(str));
     }
 
     // **** close scanner ****
